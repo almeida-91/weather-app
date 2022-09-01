@@ -2,8 +2,7 @@ async function getWeather(location) {
     clearDisplay();
     let loadDiv = document.createElement('div');
     loadDiv.className = 'loader';
-    contentDiv.appendChild(loadDiv);
-    
+    document.body.insertBefore(loadDiv,content);
     if(!location){ 
         displayInfo('');
         return;
@@ -40,21 +39,29 @@ contentDiv.style.display = 'none';
 let currentWeather;
 changeBackground('initial');
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
 submitButton.addEventListener('click', () => {
     getWeather(locationInput.value);
 });
 
 async function displayInfo(weather) {
+    const loadDiv = document.getElementsByClassName('loader')[0];
+    document.body.removeChild(loadDiv);
     const location = document.createElement('h3');
     location.textContent = locationInput.value;
     clearInput();
     if (weather == 'error'){
+        clearDisplay();
         location.textContent = 'NOT FOUND :( (check spelling)';
         contentDiv.appendChild(location);
         contentDiv.style.display = 'grid';
         getGif('reading');
         return;
     } else if (weather == '') {
+        clearDisplay();
         location.textContent = 'Please enter a city!';
         location.style.textAlign = 'center';
         contentDiv.appendChild(location);
@@ -85,7 +92,6 @@ async function displayInfo(weather) {
     tempmax.textContent = `Max : ${weather.temp_max}°C`;
     tempmin.textContent = `Min : ${weather.temp_min}°C`;
     humidity.textContent = `Humidity : ${weather.humidity}%`;
-
 
     clearDisplay();
     getGif(location.textContent).then(()=>{
