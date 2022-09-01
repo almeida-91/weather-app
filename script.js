@@ -1,4 +1,9 @@
 async function getWeather(location) {
+    clearDisplay();
+    let loadDiv = document.createElement('div');
+    loadDiv.className = 'loader';
+    contentDiv.appendChild(loadDiv);
+    
     if(!location){ 
         displayInfo('');
         return;
@@ -16,7 +21,7 @@ async function getWeather(location) {
         weather.then(function(response){
             if (response.cod == 404){
                 displayInfo('error');
-                throw (`Couldn't fetch input data`);
+                throw (`location couldn't be found.`);
             }
             currentWeather = response.main;
             displayInfo(currentWeather);
@@ -43,7 +48,6 @@ async function displayInfo(weather) {
     const location = document.createElement('h3');
     location.textContent = locationInput.value;
     clearInput();
-    clearDisplay();
     if (weather == 'error'){
         location.textContent = 'NOT FOUND :( (check spelling)';
         contentDiv.appendChild(location);
@@ -82,8 +86,11 @@ async function displayInfo(weather) {
     tempmin.textContent = `Min : ${weather.temp_min}°C`;
     humidity.textContent = `Humidity : ${weather.humidity}%`;
 
+
+    clearDisplay();
+    getGif(location.textContent).then(()=>{
+
     contentDiv.appendChild(location);
-    await getGif(location.textContent);
 
     contentDiv.appendChild(feelsImage);
     contentDiv.appendChild(feelsLike);
@@ -95,8 +102,9 @@ async function displayInfo(weather) {
     contentDiv.appendChild(tempmin);
     contentDiv.appendChild(humidImage);
     contentDiv.appendChild(humidity);
-    contentDiv.style.display = 'grid';
     changeBackground(weather.temp);
+    contentDiv.style.display = 'grid';
+    })
 }
 
 
